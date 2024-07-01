@@ -1,0 +1,34 @@
+services:
+  nginx:
+    image: 'jc21/nginx-proxy-manager:latest'
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+
+  vote:
+    image: ecr-repo/vote:latest
+    ports:
+      - "5002:80"
+
+  result:
+    image: ecr-repo/result:latest
+    ports:
+      - "5001:80"
+
+  worker:
+    image: ecr-repo/worker:latest
+
+  redis:
+    image: redis:alpine
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: "$SENSITIVE"
+      POSTGRES_PASSWORD: "$SENSITIVE"
+    volumes:
+      - "db-data:/var/lib/postgresql/data"
