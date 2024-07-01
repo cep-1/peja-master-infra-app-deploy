@@ -13,18 +13,27 @@ services:
     image: ecr-repo/vote:latest
     ports:
       - "5002:80"
+    networks: 
+      - front-tier
+      - back-tier
 
   result:
     image: ecr-repo/result:latest
     ports:
       - "5001:80"
+    networks: 
+      - front-tier
+      - back-tier
 
   worker:
     image: ecr-repo/worker:latest
+    networks: 
+      - back-tier
 
   redis:
     image: redis:alpine
-
+    networks: 
+      - back-tier
   db:
     image: postgres:15-alpine
     environment:
@@ -32,3 +41,9 @@ services:
       POSTGRES_PASSWORD: "$SENSITIVE"
     volumes:
       - "db-data:/var/lib/postgresql/data"
+    networks: 
+      - back-tier
+
+networks:
+  front-tier: 
+  back-tier:  
