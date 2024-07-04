@@ -8,25 +8,23 @@ services:
       - '80:80'
       - '81:81'
       - '443:443'
+    networks:
+      - front-tier
 
   vote:
-    image: ecr-repo/vote:latest
-    ports:
-      - "5002:80"
+    image: 211125460791.dkr.ecr.eu-central-1.amazonaws.com/peja-vote-repo:${VOTE_TAG}
     networks: 
       - front-tier
       - back-tier
 
   result:
-    image: ecr-repo/result:latest
-    ports:
-      - "5001:80"
+    image: 211125460791.dkr.ecr.eu-central-1.amazonaws.com/peja-result-repo:${RESULT_TAG}
     networks: 
       - front-tier
       - back-tier
 
   worker:
-    image: ecr-repo/worker:latest
+    image: 211125460791.dkr.ecr.eu-central-1.amazonaws.com/peja-worker-repo:${WORKER_TAG}
     networks: 
       - back-tier
 
@@ -34,15 +32,19 @@ services:
     image: redis:alpine
     networks: 
       - back-tier
+
   db:
     image: postgres:15-alpine
     environment:
-      POSTGRES_USER: "$SENSITIVE"
-      POSTGRES_PASSWORD: "$SENSITIVE"
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - "db-data:/var/lib/postgresql/data"
     networks: 
       - back-tier
+
+volumes:
+  db-data:
 
 networks:
   front-tier: 
